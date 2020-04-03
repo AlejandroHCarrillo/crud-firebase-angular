@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HeroeModel } from '../models/heroe.model';
-import { map } from 'rxjs/operators';
+import { map, delay } from 'rxjs/operators';
 
 
 @Injectable({
@@ -12,9 +12,7 @@ export class HeroesService {
   
   constructor( private http:HttpClient) { }
 
-  crearHeroe(heroe:HeroeModel){
-    console.log(`Post url: ${this.url}`);
-    
+  crearHeroe(heroe:HeroeModel){    
     return this.http.post(`${this.url}/heroes.json`, heroe)
     .pipe(
       map((resp:any) => {
@@ -24,27 +22,47 @@ export class HeroesService {
     );
   }
 
-  ///////////////////////////////////////////
-  // getHeroe(): Observable<HeroeModel[ ]> {
-  //   return this.http.get(name)
-  //     .map((res: Response) => <HeroeModel[ ]>res.json())
-  //     .catch(this.handleError);
-  // }
+  actualizarHeroe(heroe:HeroeModel){
+    let heroeTemp = {...heroe};
+    delete heroeTemp.id;
+    
+    return this.http.put(`${this.url}/heroes/${heroe.id}.json`, heroeTemp)
+    .pipe(
+      map((resp:any) => {
+        return resp;
+      })
+    );
+  }
   
-  // addHeroe(name: string): Observable<HeroeModel>  {
-  //   let body = JSON.stringify({ name });
-  //   let headers = new Headers({ 'Content-Type': 'application/json'});
-  //   let options = new RequestOptions({ headers: headers });
-  
-  //   return this.http.post(this.url, body, options)
-  //     .map(this.handleResponse)
-  //   .catch(this.handleError);
-  // }
-  // private handleError(error: Response) {
-  //   console.error(error);
-  //   return Observable.throw(error.json().error || 'Server error');
-  // }
-  
+  getHeroe(id:string) {
+    return this.http.get(`${this.url}/heroes/${id}.json`);
+  }
 
-  ///////////////////////////////////////////
+  getHeroes(){
+    return this.http.get(`${this.url}/heroes.json`)
+    .pipe(
+      map( resp => this.crearArreglo(resp)),
+      delay(1500)
+    );
+  }
+
+  borrarHeroe(id:string){    
+    return this.http.delete(`${this.url}/heroes/${id}.json`);
+  }
+
+  private crearArreglo(heroesObj:object){
+    let heroes: HeroeModel[] = [];
+    // console.log(heroesObj);
+
+    if(heroesObj === null) { return []; }
+
+    Object.keys( heroesObj ).forEach( key => {
+      const heroe : HeroeModel = heroesObj[key];
+      heroe.id = key;
+      heroes.push(heroe);
+    });
+    
+    return heroes;
+  }
+
 }
