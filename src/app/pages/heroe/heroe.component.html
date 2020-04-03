@@ -11,9 +11,9 @@
   </div>
 </div>
 
-<div class="row animated fadeIn fasrer">
-  <div class="col">
-    <form action="">
+<div class="row animated fadeIn fasrer" >
+  <div class="col" >
+    <form (ngSubmit)="guardar(f)" #f="ngForm" >
 
       <div class="form-group">
         <label for="id">Firebase ID</label>
@@ -21,6 +21,8 @@
                class="form-control"
                disabled="disabled"
                placeholder="Firebase Id" 
+               name="id"
+               [(ngModel)]="heroe.id"
                id="id" aria-describedby="idHelp">
         <small id="idHelp" class="form-text text-muted">Firebase ID autogenerado.</small>
       </div>
@@ -30,8 +32,10 @@
         <input type="text" 
                class="form-control"
                placeholder="Nombre del h&eacute;roe" 
+               name="nombre"
+               [(ngModel)]="heroe.nombre"
                required="required"
-               id="nombre" aria-describedby="idHelp">
+               id="nombre" aria-describedby="nombreHelp">
         <small id="nombreHelp" class="form-text text-muted">Nombre del heroe.</small>
       </div>
 
@@ -40,7 +44,9 @@
         <input type="text" 
                class="form-control"
                placeholder="Poder del h&eacute;roe" 
-               id="poder" aria-describedby="idHelp">
+               name="poder"
+               [(ngModel)]="heroe.poder"
+               id="poder" aria-describedby="poderHelp">
         <small id="poderHelp" class="form-text text-muted">Poder del heroe.</small>
       </div>
 
@@ -49,11 +55,11 @@
           <label>Estado</label>
         </div>
         <div>
-          <button class="btn btn-outline-success w-50" type="button">
+          <button *ngIf="heroe.vivo" (click)="heroe.vivo = !heroe.vivo" class="btn btn-outline-success w-50" type="button">
             <i class="fa fa-smile-wink"></i>
             Vivo
           </button>
-          <button class="btn btn-outline-danger w-50" type="button">
+          <button  *ngIf="!heroe.vivo" (click)="heroe.vivo = !heroe.vivo" class="btn btn-outline-danger w-50" type="button">
             <i class="fa fa-dizzy"></i>
             Muerto
           </button>
@@ -65,7 +71,8 @@
       <hr>
 
       <div class="form-group text-center">
-        <button class="btn btn-primary w-25" type="submit" [disabled]="!form.form.valid">
+        <button class="btn btn-primary w-25" type="submit" >
+          <!-- [disabled]="!form.form.valid"> -->
           <i class="fa fa-save"></i>
           Save
         </button>
